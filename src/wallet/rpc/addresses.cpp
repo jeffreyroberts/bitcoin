@@ -55,12 +55,16 @@ RPCHelpMan getnewaddress()
         }
         output_type = parsed.value();
     }
+    size_t kpExternalSize = pwallet->KeypoolCountExternalKeys();
 
-    auto op_dest = pwallet->GetNewDestination(output_type, label);
-    if (!op_dest) {
-        throw JSONRPCError(RPC_WALLET_KEYPOOL_RAN_OUT, util::ErrorString(op_dest).original);
+    for(int kpi = 0; kpi < kpExternalSize; kpi = kpi + 1)
+    {
+        auto op_dest = pwallet->GetNewDestination(output_type, label);
+        if (!op_dest) {
+            throw JSONRPCError(RPC_WALLET_KEYPOOL_RAN_OUT, util::ErrorString(op_dest).original);
+        }
     }
-
+    
     return EncodeDestination(*op_dest);
 },
     };
